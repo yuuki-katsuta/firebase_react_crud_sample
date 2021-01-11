@@ -7,16 +7,32 @@ import Button from '@material-ui/core/Button';
 const SignUp = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const { signup } = useContext(AuthContext);
   // AuthContextからsignup関数を受け取る
   const handleSubmit = () => {
-    signup(email, password, history);
+    signup(email, password, name, history);
   };
 
   return (
     <div>
       <h1>サインイン</h1>
       <form>
+        <div style={{ margin: '16px 0' }}>
+          <TextField
+            id='standard-name-required'
+            label='name'
+            name='name'
+            type='name'
+            placeholder='Name'
+            fullWidth
+            size='medium'
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+            }}
+          />
+        </div>
         <div style={{ margin: '16px 0' }}>
           <TextField
             id='standard-required'

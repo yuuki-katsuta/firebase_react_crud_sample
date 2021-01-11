@@ -22,10 +22,19 @@ export const AuthProvider = ({ children }) => {
   };
 
   // 新しいユーザーを作成しログインさせる関数
-  const signup = async (email, password, history) => {
+  const signup = async (email, password, name, history) => {
     try {
+      if (name === '') {
+        alert('Name is Not entered');
+        return;
+      }
       //新しいユーザーを登録する
       await auth.createUserWithEmailAndPassword(email, password);
+      var user = auth.currentUser;
+      //updateProfileでuserのプロフィールを更新
+      user.updateProfile({
+        displayName: name,
+      });
       history.push('/');
     } catch (error) {
       alert(error);
