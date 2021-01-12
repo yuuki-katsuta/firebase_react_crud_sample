@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { auth } from '../base.js';
-//認証に必要なロジック
 
 // contextオブジェクトの作成
 export const AuthContext = React.createContext();
@@ -32,7 +31,8 @@ export const AuthProvider = ({ children }) => {
       await auth.createUserWithEmailAndPassword(email, password);
       var user = auth.currentUser;
       //updateProfileでuserのプロフィールを更新
-      user.updateProfile({
+      await user.updateProfile({
+        //ユーザーネームを設定
         displayName: name,
       });
       history.push('/');
@@ -44,7 +44,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     //認証状態オブザーバーを設定し、ユーザーデータを取得する
     //firebase.auth().onAuthStateChanged 関数で、認証状態の変化を監視します。認証されていれば user オブジェクトに値が設定され、未認証であれば、null が設定される
-    auth.onAuthStateChanged(setCurrentUser);
+    //ログイン状態が変化すると呼び出される
+    auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+    });
   }, []);
 
   return (

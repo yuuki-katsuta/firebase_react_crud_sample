@@ -1,6 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import 'firebase/database';
+import 'firebase/firestore';
 
 //初期化
 firebase.initializeApp({
@@ -15,5 +15,5 @@ firebase.initializeApp({
 });
 
 const auth = firebase.auth();
-const db = firebase.database();
+const db = firebase.firestore();
 export { auth, db };
