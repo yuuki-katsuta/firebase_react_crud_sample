@@ -22,16 +22,15 @@ const Home = () => {
   //firestoreからデータを受け取る
   useEffect(() => {
     (async () => {
+      //console.log('firestoreからデータを受け取る');
       //"get" メソッドを使用してコレクション全体を取得
       const resTodo = await db.collection('todoList').doc('todo').get();
       //ドキュメントデータは、resTodo.data()で受け取れる
       setTodoList(resTodo.data().tasks);
-
       const resFinishedTodo = await db
         .collection('todoList')
         .doc('finishedTodo')
         .get();
-      //ドキュメントデータは、resTodo.data()で受け取れる
       setIsFinishedTodo(resFinishedTodo.data().tasks);
     })();
   }, [db]);
@@ -40,8 +39,10 @@ const Home = () => {
   useEffect(() => {
     if (isChangedTodo) {
       (async () => {
-        //console.log('発火');
+        //console.log('firestoreにデータを渡す（末完了）');
         const docRef = await db.collection('todoList').doc('todo');
+        //ドキュメントの特定のフィールドを更新するには、update()メソッドを使用する。
+        //todo ドキュメントのtasks フィールドを更新
         docRef.update({ tasks: todoList });
       })();
     }
@@ -51,7 +52,7 @@ const Home = () => {
   useEffect(() => {
     if (isChangedFinished) {
       (async () => {
-        console.log('発火');
+        //console.log('firestoreにデータを渡す（完了）');
         const docRef = await db.collection('todoList').doc('finishedTodo');
         docRef.update({ tasks: finishedTodo });
       })();
@@ -60,6 +61,10 @@ const Home = () => {
 
   //input送信時
   const addTodo = async () => {
+    if (input === '') {
+      alert('Please fill in the blanks');
+      return;
+    }
     //Todoが変化したのでtrue
     setIsChangedTodo(true);
     setTodoList([...todoList, input]);
@@ -69,13 +74,13 @@ const Home = () => {
   //未完了タスクをdelete
   const deleteTodo = (index) => {
     //Todoが変化したのでtrue
-    setIsChangedFinished(true);
+    setIsChangedTodo(true);
     setTodoList(todoList.filter((_, idx) => idx !== index));
   };
 
   //完了タスクをdelete
   const deleteFinishTodo = (index) => {
-    // 追記 完了済みTodoが変化したのでtrue
+    //完了済みTodoが変化したのでtrue
     setIsChangedFinished(true);
     setIsFinishedTodo(finishedTodo.filter((_, idx) => idx !== index));
   };
@@ -107,10 +112,8 @@ const Home = () => {
     <div>
       <h1>ようこそ {currentUser.displayName} !!</h1>
       <h3>{currentUser.displayName}のやること</h3>
-
       <input onChange={(e) => setInput(e.target.value)} value={input} />
       <button onClick={() => addTodo()}>追加</button>
-
       <div>
         <h2>未完了</h2>
         <div>
@@ -123,18 +126,16 @@ const Home = () => {
           ))}
         </div>
       </div>
-
       <div>
         <h2>完了</h2>
         {finishedTodo.map((todo, idx) => (
           <div key={idx}>
             {todo}
-            <button onClick={() => deleteTodo(idx)}>削除</button>
+            <button onClick={() => deleteFinishTodo(idx)}>削除</button>
             <button onClick={() => reopenTodo(idx)}>戻す</button>
           </div>
         ))}
       </div>
-
       <button
         onClick={() => {
           auth.signOut();
