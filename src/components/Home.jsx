@@ -3,6 +3,16 @@ import { auth } from '../base';
 import { AuthContext } from '../auth/AuthProvider';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Divider from '@material-ui/core/Divider';
+import DeleteIcon from '@material-ui/icons/Delete';
+import IconButton from '@material-ui/core/IconButton';
 
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
@@ -64,27 +74,52 @@ const Home = () => {
     <div>
       <h1>ようこそ {currentUser.displayName} !!</h1>
       <h3>{currentUser.displayName}のやること</h3>
-      <input onChange={(e) => setInput(e.target.value)} value={input} />
-      <button onClick={() => addTodo()}>追加</button>
       <div>
-        <h2>未完了</h2>
+        <TextField
+          id='standard-basic'
+          onChange={(e) => setInput(e.target.value)}
+          value={input}
+        />
+        <Fab
+          style={{ verticalAlign: 'bottom' }}
+          color='primary'
+          aria-label='add'
+          size='small'
+          onClick={() => addTodo()}
+        >
+          <AddIcon />
+        </Fab>
+      </div>
+      <div style={{ marginTop: '40px' }}>
         <div>
           {todoList.map((todo, idx) => (
             <div key={idx}>
-              {todo}
-              <button onClick={() => deleteTodo(idx)}>削除</button>
+              <List component='nav' aria-label='main mailbox folders'>
+                <ListItem button>
+                  <ListItemText primary={todo} />
+                  <IconButton
+                    aria-label='delete'
+                    onClick={() => deleteTodo(idx)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItem>
+                <Divider />
+              </List>
             </div>
           ))}
         </div>
       </div>
-      <button
+      <Button
+        style={{ marginTop: '20px' }}
+        color='primary'
         onClick={() => {
           auth.signOut();
           //signOut()でログアウトを行う
         }}
       >
-        Sign Out
-      </button>
+        サインアウト
+      </Button>
     </div>
   );
 };
