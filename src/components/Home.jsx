@@ -7,14 +7,10 @@ import 'firebase/firestore';
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
   const [input, setInput] = useState('');
-  //未完了タスク
+  //タスク
   const [todoList, setTodoList] = useState([]);
-  //完了タスク
-  const [finishedTodo, setIsFinishedTodo] = useState([]);
-  //未完了タスクが変化したか監視
+  //タスクが変化したか監視
   const [isChangedTodo, setIsChangedTodo] = useState(false);
-  //完了タスクが変化したか監視
-  const [isChangedFinished, setIsChangedFinished] = useState(false);
 
   //Cloud Firestore を初期化する
   const db = firebase.firestore();
@@ -22,42 +18,30 @@ const Home = () => {
   //firestoreからデータを受け取る
   useEffect(() => {
     (async () => {
-      //console.log('firestoreからデータを受け取る');
       //"get" メソッドを使用してコレクション全体を取得
-      const resTodo = await db.collection('todoList').doc('todo').get();
-      //ドキュメントデータは、resTodo.data()で受け取れる
-      setTodoList(resTodo.data().tasks);
-      const resFinishedTodo = await db
+      console.log('firestoreからデータを受け取る');
+      const resTodo = await db
         .collection('todoList')
-        .doc('finishedTodo')
+        .doc(currentUser.uid)
         .get();
-      setIsFinishedTodo(resFinishedTodo.data().tasks);
+      //ドキュメントデータは、resTodo.data()で受け取れる
+      if (resTodo.data()) {
+        setTodoList(resTodo.data().tasks);
+      }
     })();
-  }, [db]);
+  }, [db, currentUser]);
 
   //firestoreにデータを渡す（未完了）
   useEffect(() => {
     if (isChangedTodo) {
       (async () => {
-        //console.log('firestoreにデータを渡す（末完了）');
-        const docRef = await db.collection('todoList').doc('todo');
-        //ドキュメントの特定のフィールドを更新するには、update()メソッドを使用する。
-        //todo ドキュメントのtasks フィールドを更新
-        docRef.update({ tasks: todoList });
+        console.log('firestoreにデータを渡す');
+        await db.collection('todoList').doc(currentUser.uid).set({
+          tasks: todoList,
+        });
       })();
     }
-  }, [todoList, isChangedTodo, db]);
-
-  //firestoreにデータを渡す（完了）
-  useEffect(() => {
-    if (isChangedFinished) {
-      (async () => {
-        //console.log('firestoreにデータを渡す（完了）');
-        const docRef = await db.collection('todoList').doc('finishedTodo');
-        docRef.update({ tasks: finishedTodo });
-      })();
-    }
-  }, [finishedTodo, isChangedFinished, db]);
+  }, [todoList, isChangedTodo, db, currentUser]);
 
   //input送信時
   const addTodo = async () => {
@@ -65,7 +49,6 @@ const Home = () => {
       alert('Please fill in the blanks');
       return;
     }
-    //Todoが変化したのでtrue
     setIsChangedTodo(true);
     setTodoList([...todoList, input]);
     setInput('');
@@ -73,39 +56,8 @@ const Home = () => {
 
   //未完了タスクをdelete
   const deleteTodo = (index) => {
-    //Todoが変化したのでtrue
     setIsChangedTodo(true);
     setTodoList(todoList.filter((_, idx) => idx !== index));
-  };
-
-  //完了タスクをdelete
-  const deleteFinishTodo = (index) => {
-    //完了済みTodoが変化したのでtrue
-    setIsChangedFinished(true);
-    setIsFinishedTodo(finishedTodo.filter((_, idx) => idx !== index));
-  };
-
-  //未完了→完了 処理
-  const finishTodo = (index) => {
-    //完了、未完了どちらも変化する
-    setIsChangedTodo(true);
-    setIsChangedFinished(true);
-    deleteTodo(index);
-    //完了リストへ追加処理
-    setIsFinishedTodo([
-      ...finishedTodo,
-      //完了から選択したタスクを追加
-      todoList.find((_, idx) => idx === index),
-    ]);
-  };
-
-  //完了→未完了 処理
-  const reopenTodo = (index) => {
-    //完了、未完了どちらも変化する
-    setIsChangedTodo(true);
-    setIsChangedFinished(true);
-    deleteFinishTodo(index);
-    setTodoList([...todoList, finishedTodo.find((_, idx) => idx === index)]);
   };
 
   return (
@@ -121,20 +73,9 @@ const Home = () => {
             <div key={idx}>
               {todo}
               <button onClick={() => deleteTodo(idx)}>削除</button>
-              <button onClick={() => finishTodo(idx)}>完了済</button>
             </div>
           ))}
         </div>
-      </div>
-      <div>
-        <h2>完了</h2>
-        {finishedTodo.map((todo, idx) => (
-          <div key={idx}>
-            {todo}
-            <button onClick={() => deleteFinishTodo(idx)}>削除</button>
-            <button onClick={() => reopenTodo(idx)}>戻す</button>
-          </div>
-        ))}
       </div>
       <button
         onClick={() => {
