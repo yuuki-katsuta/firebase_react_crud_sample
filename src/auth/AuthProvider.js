@@ -7,6 +7,7 @@ export const AuthContext = React.createContext();
 export const AuthProvider = ({ children }) => {
   //currentUserは現在ログインしているユーザーの状態を表す
   const [currentUser, setCurrentUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // ユーザーをログインさせる関数
   const login = async (email, password, history) => {
@@ -42,11 +43,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     //認証状態オブザーバーを設定し、ユーザーデータを取得する
     //firebase.auth().onAuthStateChanged 関数で、認証状態の変化を監視します。認証されていれば user オブジェクトに値が設定され、未認証であれば、null が設定される
     //ログイン状態が変化すると呼び出される
     auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
+      setIsLoading(false);
     });
   }, []);
 
@@ -60,6 +63,7 @@ export const AuthProvider = ({ children }) => {
         login: login,
         signup: signup,
         currentUser,
+        isLoading,
       }}
     >
       {children}

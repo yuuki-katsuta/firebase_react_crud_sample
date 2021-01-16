@@ -4,6 +4,7 @@ import { withRouter } from 'react-router';
 import { AuthContext } from '../auth/AuthProvider';
 import TextInputField from './TextInputField';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const Login = ({ history }) => {
   //レンダリングする関数はReact Routerのpropsを受け取る
@@ -12,12 +13,13 @@ const Login = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // AuthContextからlogin関数を受け取る
-  const { login } = useContext(AuthContext);
+  const { login, isLoading } = useContext(AuthContext);
   const handleSubmit = () => {
     login(email, password, history);
   };
-
-  return (
+  return isLoading ? (
+    <CircularProgress />
+  ) : (
     <div>
       <h1>ログイン</h1>
       <form>
