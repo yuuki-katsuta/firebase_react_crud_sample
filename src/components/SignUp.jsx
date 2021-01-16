@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { withRouter } from 'react-router';
-import { AuthContext } from './AuthProvider';
+import { AuthContext } from '../auth/AuthProvider';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 

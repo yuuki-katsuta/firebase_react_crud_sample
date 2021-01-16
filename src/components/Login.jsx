@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 //ページ遷移をhandleで行う時にはwithRouterを使う
 import { withRouter } from 'react-router';
-import { AuthContext } from './AuthProvider';
+import { AuthContext } from '../auth/AuthProvider';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 

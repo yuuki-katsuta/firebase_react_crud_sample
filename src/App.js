@@ -3,8 +3,8 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import PrivateRoute from './auth/PrivateRoute';
 import { AuthProvider } from './auth/AuthProvider';
 import Home from './components/Home';
-import Login from './auth/Login';
-import SignUp from './auth/SignUp';
+import Login from './components/Login';
+import SignUp from './components/SignUp';
 import styled from 'styled-components';
 
 const Main = styled.main`
