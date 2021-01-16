@@ -36,7 +36,6 @@ const Home = () => {
   useEffect(() => {
     if (isChangedTodo) {
       (async () => {
-        console.log('firestoreにデータを渡す');
         await db.collection('todoList').doc(currentUser.uid).set({
           tasks: todoList,
         });
