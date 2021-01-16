@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { withRouter } from 'react-router';
 import { AuthContext } from '../auth/AuthProvider';
-import TextField from '@material-ui/core/TextField';
+import TextInputField from './TextInputField';
 import Button from '@material-ui/core/Button';
 
 const SignUp = ({ history }) => {
@@ -18,51 +18,33 @@ const SignUp = ({ history }) => {
     <div>
       <h1>サインイン</h1>
       <form>
-        <div style={{ margin: '16px 0' }}>
-          <TextField
-            id='standard-name-required'
-            label='name'
-            name='name'
-            type='name'
-            placeholder='Name'
-            fullWidth
-            size='medium'
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value);
-            }}
-          />
-        </div>
-        <div style={{ margin: '16px 0' }}>
-          <TextField
-            id='standard-required'
-            label='e-mail'
-            name='email'
-            type='email'
-            placeholder='Email'
-            fullWidth
-            size='medium'
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-          />
-        </div>
-        <div style={{ margin: '16px 0' }}>
-          <TextField
-            id='standard-password-input'
-            label='Password'
-            type='password'
-            name='password'
-            placeholder='Password'
-            fullWidth
-            size='medium'
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-          />
-        </div>
+        <TextInputField
+          id={'standard-name-required'}
+          label={'name'}
+          name={'name'}
+          type={'name'}
+          placeholder={'Name'}
+          value={name}
+          setName={setName}
+        />
+        <TextInputField
+          id={'standard-required'}
+          label={'email'}
+          name={'email'}
+          type={'email'}
+          placeholder={'Email'}
+          value={email}
+          setName={setEmail}
+        />
+        <TextInputField
+          id={'standard-password-input'}
+          label={'password'}
+          name={'password'}
+          type={'password'}
+          placeholder={'Pasword'}
+          value={password}
+          setName={setPassword}
+        />
         <div>
           <Button
             variant='outlined'
