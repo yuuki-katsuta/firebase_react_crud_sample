@@ -12,24 +12,61 @@ const Home = () => {
   const db = firebase.firestore();
 
   //データ取得
-  useEffect(() => {
+  const fetchSpotsData = () => {
     console.log('発火');
+    //コレクションからuidがcurrentUser.uidであるドキュメントを取得
     const spotsRef = db.collection('spots').where('uid', '==', currentUser.uid);
     spotsRef.get().then((snapshot) => {
+      const newSpots = [];
       snapshot.forEach((doc) => {
         console.log(doc.data());
+        newSpots.push(...doc.data().spot);
+        console.log(newSpots);
       });
+      setSpot(newSpots);
     });
-  }, [db, currentUser]);
+  };
+
+  //マウント時データ取得
+  useEffect(() => {
+    fetchSpotsData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const spotDelete = (spot) => {
+    db.collection('spots')
+      .doc(currentUser.uid)
+      .update({
+        spot: firebase.firestore.FieldValue.arrayRemove(spot),
+      })
+      .then(() => {
+        fetchSpotsData();
+        alert('削除したよ！');
+      })
+      .catch(() => {
+        alert('失敗したよ！');
+      });
+  };
 
   return (
     <div>
       <h1>ようこそ {currentUser.displayName} !!</h1>
       <h1>{currentUser.uid}</h1>
       <div>
-        <h2>Spots</h2>
+        <h2>Spots一覧</h2>
         {spots.map((spot, idx) => (
-          <div key={idx}>{spot}</div>
+          <div key={idx}>
+            <div>
+              {idx}: {spot}
+              <button
+                onClick={() => {
+                  spotDelete(spot);
+                }}
+              >
+                削除
+              </button>
+            </div>
+          </div>
         ))}
       </div>
 
