@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
   const [spots, setSpot] = useState([]);
+  const [input, setInput] = useState('');
 
   const db = firebase.firestore();
 
@@ -15,16 +16,14 @@ const Home = () => {
   const fetchSpotsData = () => {
     console.log('発火');
     //コレクションからuidがcurrentUser.uidであるドキュメントを取得
-    const spotsRef = db.collection('spots').where('uid', '==', currentUser.uid);
-    spotsRef.get().then((snapshot) => {
-      const newSpots = [];
-      snapshot.forEach((doc) => {
-        console.log(doc.data());
+    db.collection('spots')
+      .doc(currentUser.uid)
+      .get()
+      .then((doc) => {
+        const newSpots = [];
         newSpots.push(...doc.data().spot);
-        console.log(newSpots);
+        setSpot(newSpots);
       });
-      setSpot(newSpots);
-    });
   };
 
   //マウント時データ取得
@@ -48,10 +47,48 @@ const Home = () => {
       });
   };
 
+  const spotAdd = () => {
+    const newSpots = [...spots];
+    newSpots.push(input);
+
+    db.collection('spots')
+      .doc(currentUser.uid)
+      .set({
+        spot: newSpots,
+      })
+      .then(() => {
+        fetchSpotsData();
+      });
+  };
+
+  const IinputClickHandler = () => {
+    if (input === '') {
+      alert('空欄はだめ！！');
+      return;
+    }
+    spotAdd();
+    setInput('');
+  };
+
   return (
     <div>
       <h1>ようこそ {currentUser.displayName} !!</h1>
       <h1>{currentUser.uid}</h1>
+      <div>
+        <input
+          value={input}
+          onChange={(e) => {
+            setInput(e.target.value);
+          }}
+        />
+        <button
+          onClick={() => {
+            IinputClickHandler();
+          }}
+        >
+          追加
+        </button>
+      </div>
       <div>
         <h2>Spots一覧</h2>
         {spots.map((spot, idx) => (
