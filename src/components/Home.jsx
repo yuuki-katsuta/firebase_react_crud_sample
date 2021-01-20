@@ -20,9 +20,11 @@ const Home = () => {
       .doc(currentUser.uid)
       .get()
       .then((doc) => {
-        const newSpots = [];
-        newSpots.push(...doc.data().spot);
-        setSpot(newSpots);
+        if (doc.data()) {
+          const newSpots = [];
+          newSpots.push(...doc.data().spot);
+          setSpot(newSpots);
+        }
       });
   };
 
@@ -32,11 +34,17 @@ const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const spotDelete = (spot) => {
+  const spotDelete = (id) => {
+    // setSpot(spots.filter((_, idx) => idx !== id));
+    // console.log(spots);
+
+    const newSpots = spots.filter((_, idx) => idx !== id);
+    console.log(newSpots);
+
     db.collection('spots')
       .doc(currentUser.uid)
-      .update({
-        spot: firebase.firestore.FieldValue.arrayRemove(spot),
+      .set({
+        spot: newSpots,
       })
       .then(() => {
         fetchSpotsData();
@@ -91,13 +99,13 @@ const Home = () => {
       </div>
       <div>
         <h2>Spots一覧</h2>
-        {spots.map((spot, idx) => (
-          <div key={idx}>
+        {spots.map((spot, id) => (
+          <div key={id}>
             <div>
-              {idx}: {spot}
+              {id}: {spot}
               <button
                 onClick={() => {
-                  spotDelete(spot);
+                  spotDelete(id);
                 }}
               >
                 削除
