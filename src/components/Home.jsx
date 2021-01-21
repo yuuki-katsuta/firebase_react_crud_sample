@@ -4,17 +4,18 @@ import { AuthContext } from '../auth/AuthProvider';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import Button from '@material-ui/core/Button';
+import UpdateForm from './UpdateForm';
 
 const Home = () => {
   const { currentUser } = useContext(AuthContext);
   const [spots, setSpot] = useState([]);
   const [input, setInput] = useState('');
+  const [updateItem, setUpdateItem] = useState('');
 
   const db = firebase.firestore();
 
   //データ取得
   const fetchSpotsData = () => {
-    console.log('発火');
     //コレクションからuidがcurrentUser.uidであるドキュメントを取得
     db.collection('spots')
       .doc(currentUser.uid)
@@ -35,11 +36,7 @@ const Home = () => {
   }, []);
 
   const spotDelete = (id) => {
-    // setSpot(spots.filter((_, idx) => idx !== id));
-    // console.log(spots);
-
     const newSpots = spots.filter((_, idx) => idx !== id);
-    console.log(newSpots);
 
     db.collection('spots')
       .doc(currentUser.uid)
@@ -66,16 +63,36 @@ const Home = () => {
       })
       .then(() => {
         fetchSpotsData();
+        setUpdateItem('');
       });
   };
 
-  const IinputClickHandler = () => {
+  const inputClickHandler = () => {
     if (input === '') {
       alert('空欄はだめ！！');
       return;
     }
     spotAdd();
     setInput('');
+  };
+
+  //更新処理
+  const spotUpdate = (id) => {
+    const newSpot = spots.slice();
+    newSpot[id] = updateItem;
+
+    db.collection('spots')
+      .doc(currentUser.uid)
+      .set({
+        spot: newSpot,
+      })
+      .then(() => {
+        setUpdateItem('');
+        fetchSpotsData();
+      })
+      .catch(() => {
+        alert('失敗したよ！');
+      });
   };
 
   return (
@@ -91,7 +108,7 @@ const Home = () => {
         />
         <button
           onClick={() => {
-            IinputClickHandler();
+            inputClickHandler();
           }}
         >
           追加
@@ -110,6 +127,12 @@ const Home = () => {
               >
                 削除
               </button>
+              <UpdateForm
+                spotUpdate={spotUpdate}
+                setUpdateItem={setUpdateItem}
+                updateItem={updateItem}
+                id={id}
+              />
             </div>
           </div>
         ))}
