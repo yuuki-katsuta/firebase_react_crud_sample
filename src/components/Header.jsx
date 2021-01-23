@@ -9,9 +9,9 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import { withRouter } from 'react-router';
-import { useContext, useState } from 'react';
 import { auth } from '../base';
+import { withRouter } from 'react-router';
+import { useContext } from 'react';
 import { AuthContext } from '../auth/AuthProvider';
 
 const useStyles = makeStyles((theme) => ({
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = ({ history }) => {
+const Header = ({ hisroty }) => {
   const { currentUser } = useContext(AuthContext);
 
   const classes = useStyles();
@@ -77,7 +77,16 @@ const Header = ({ history }) => {
                   onClose={handleClose}
                 >
                   <MenuItem onClick={handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={handleClose}>Log out</MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <p
+                      style={{ margin: '0' }}
+                      onClick={() => {
+                        auth.signOut();
+                      }}
+                    >
+                      Log out
+                    </p>
+                  </MenuItem>
                 </Menu>
               )}
             </div>
@@ -85,22 +94,6 @@ const Header = ({ history }) => {
         </Toolbar>
       </AppBar>
     </div>
-    // <div>
-    //   {currentUser ? (
-    //     <button
-    //       onClick={() => {
-    //         history.push({
-    //           pathname: '/chat',
-    //           state: { name: currentUser.displayName },
-    //         });
-    //       }}
-    //     >
-    //       ちゃっと
-    //     </button>
-    //   ) : (
-    //     <h2>こんにちは！</h2>
-    //   )}
-    // </div>
   );
 };
 

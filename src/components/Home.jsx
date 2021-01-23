@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { auth } from '../base';
 import { AuthContext } from '../auth/AuthProvider';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-import Button from '@material-ui/core/Button';
 import UpdateForm from './UpdateForm';
 import { withRouter } from 'react-router';
 
@@ -139,20 +137,7 @@ const Home = ({ history }) => {
         ))}
       </div>
 
-      <Button
-        style={{ margin: '20px 0' }}
-        color='primary'
-        onClick={() => {
-          history.push({
-            pathname: '/chat',
-            state: { name: currentUser.displayName },
-          });
-        }}
-      >
-        チャット
-      </Button>
-
-      <Button
+      {/* <Button
         style={{ margin: '20px 0' }}
         color='primary'
         onClick={() => {
@@ -160,7 +145,7 @@ const Home = ({ history }) => {
         }}
       >
         ログアウト
-      </Button>
+      </Button> */}
     </div>
   );
 };

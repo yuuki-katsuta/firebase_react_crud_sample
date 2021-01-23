@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { AuthContext } from '../auth/AuthProvider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import clsx from 'clsx';
@@ -8,12 +9,10 @@ import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-// import Button from '@material-ui/core/Button';
-// import ListItemIcon from '@material-ui/core/ListItemIcon';
-// import InboxIcon from '@material-ui/icons/MoveToInbox';
-// import MailIcon from '@material-ui/icons/Mail';
+import { withRouter } from 'react-router';
 
-const DrawerList = () => {
+const DrawerList = ({ history }) => {
+  const { currentUser } = useContext(AuthContext);
   const useStyles = makeStyles({
     list: {
       width: 250,
@@ -37,9 +36,17 @@ const DrawerList = () => {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text) => (
+        {['チャット'].map((text) => (
           <ListItem button key={text}>
-            <ListItemText primary={text} />
+            <ListItemText
+              primary={text}
+              onClick={() => {
+                history.push({
+                  pathname: '/chat',
+                  state: { name: currentUser.displayName },
+                });
+              }}
+            />
           </ListItem>
         ))}
       </List>
@@ -58,25 +65,7 @@ const DrawerList = () => {
     setState({ ...state, [anchor]: open });
   };
 
-  return (
-    // <IconButton
-    //   edge='start'
-    //   className={classes.menuButton}
-    //   color='inherit'
-    //   aria-label='menu'
-    //   onClick={toggleDrawer(anchor, true)}
-    // >
-    //   <Drawer
-    //     anchor={anchor}
-    //     open={state[anchor]}
-    //     onClose={toggleDrawer(anchor, false)}
-    //   >
-    //     {list(anchor)}
-    //   </Drawer>
-
-    //   <MenuIcon />
-    // </IconButton>
-
+  return currentUser ? (
     <div>
       {['left'].map((anchor) => (
         <React.Fragment key={anchor}>
@@ -99,6 +88,17 @@ const DrawerList = () => {
         </React.Fragment>
       ))}
     </div>
+  ) : (
+    <div>
+      <IconButton
+        edge='start'
+        className={classes.menuButton}
+        color='inherit'
+        aria-label='menu'
+      >
+        <MenuIcon />
+      </IconButton>
+    </div>
   );
 };
-export default DrawerList;
+export default withRouter(DrawerList);
