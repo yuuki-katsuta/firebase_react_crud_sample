@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = ({ hisroty }) => {
+const Header = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
 
   const classes = useStyles();
@@ -49,48 +49,48 @@ const Header = ({ hisroty }) => {
           <Typography variant='h6' className={classes.title}>
             App
           </Typography>
-          {auth && (
-            <div>
-              <IconButton
-                aria-label='account of current user'
-                aria-controls='menu-appbar'
-                aria-haspopup='true'
-                onClick={handleMenu}
-                color='inherit'
+
+          <div>
+            <IconButton
+              aria-label='account of current user'
+              aria-controls='menu-appbar'
+              aria-haspopup='true'
+              onClick={handleMenu}
+              color='inherit'
+            >
+              <AccountCircle fontSize='large' />
+            </IconButton>
+            {currentUser && (
+              <Menu
+                id='menu-appbar'
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={open}
+                onClose={handleClose}
               >
-                <AccountCircle />
-              </IconButton>
-              {currentUser && (
-                <Menu
-                  id='menu-appbar'
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={open}
-                  onClose={handleClose}
-                >
-                  <MenuItem onClick={handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={handleClose}>
-                    <p
-                      style={{ margin: '0' }}
-                      onClick={() => {
-                        auth.signOut();
-                      }}
-                    >
-                      Log out
-                    </p>
-                  </MenuItem>
-                </Menu>
-              )}
-            </div>
-          )}
+                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                <MenuItem onClick={handleClose}>
+                  <p
+                    style={{ margin: '0' }}
+                    onClick={() => {
+                      auth.signOut();
+                      history.push('/');
+                    }}
+                  >
+                    Log out
+                  </p>
+                </MenuItem>
+              </Menu>
+            )}
+          </div>
         </Toolbar>
       </AppBar>
     </div>
