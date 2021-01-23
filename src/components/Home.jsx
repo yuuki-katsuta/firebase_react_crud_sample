@@ -5,8 +5,9 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import Button from '@material-ui/core/Button';
 import UpdateForm from './UpdateForm';
+import { withRouter } from 'react-router';
 
-const Home = () => {
+const Home = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
   const [spots, setSpot] = useState([]);
   const [input, setInput] = useState('');
@@ -142,6 +143,19 @@ const Home = () => {
         style={{ margin: '20px 0' }}
         color='primary'
         onClick={() => {
+          history.push({
+            pathname: '/chat',
+            state: { name: currentUser.displayName },
+          });
+        }}
+      >
+        チャット
+      </Button>
+
+      <Button
+        style={{ margin: '20px 0' }}
+        color='primary'
+        onClick={() => {
           auth.signOut();
         }}
       >
@@ -150,4 +164,4 @@ const Home = () => {
     </div>
   );
 };
-export default Home;
+export default withRouter(Home);

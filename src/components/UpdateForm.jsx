@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const UpdateForm = ({ spotUpdate, setUpdateItem, updateItem, id, spot }) => {
+const UpdateForm = ({ spotUpdate, setUpdateItem, id }) => {
   const [Inputvalue, setInputvalue] = useState('');
   return (
     <>
