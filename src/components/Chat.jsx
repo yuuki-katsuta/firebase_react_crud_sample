@@ -3,39 +3,53 @@ import { AuthContext } from '../auth/AuthProvider';
 import 'firebase/firestore';
 import firebase from 'firebase/app';
 import { withRouter } from 'react-router';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
-const Chat = ({ history }) => {
+const Chat = ({ history, match }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
-
+  const { currentUser } = useContext(AuthContext);
   const db = firebase.firestore();
   const Messages = db.collection('messages');
-  const { currentUser } = useContext(AuthContext);
+  //console.log(match.params.id);
 
   //データ取得
   const fetchMessages = () => {
-    Messages.orderBy('createdAt', 'desc')
+    const a = Messages.orderBy('createdAt', 'desc')
       //最後から10件取得
       .limit(10)
       .get()
       .then((querySnapshot) => {
         let msg = [];
         querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          msg.push({
-            message: data.message,
-            name: data.user,
-          });
+          if (doc.data()) {
+            const data = doc.data();
+            msg.push({
+              message: data.message,
+              name: data.user,
+            });
+          }
         });
         //配列の順番を入れ替える
-        msg.reverse();
-        setMessages(msg);
+        return msg.reverse();
       });
+    return a;
   };
 
   useEffect(() => {
-    fetchMessages();
+    let unmounted = false;
+    (async () => {
+      //非同期でデータを取得
+      const result = await fetchMessages();
+      //アンマウントされていなければステートを更新
+      if (!unmounted) {
+        setMessages(result);
+      }
+    })();
+    //副作用フックが返す「クリーンアップ関数」で true に更新されている。
+    //非同期処理が完了する前にコンポーネントがアンマウントされると、ステートは更新されない
+    return () => {
+      unmounted = true;
+    };
     //eslint-disable-next-line
   }, []);
 
@@ -49,18 +63,17 @@ const Chat = ({ history }) => {
         message: message,
         createdAt: new Date(),
       })
-      .then((docRef) => {
-        console.log(docRef.id);
-        fetchMessages();
+      .then(async () => {
+        const result = await fetchMessages();
+        setMessages(result);
         setMessage('');
       });
   };
 
-  return currentUser ? (
+  return (
     <div>
       <h1>Chat</h1>
       <h2>ようこそ</h2>
-
       <div>
         <input
           value={message}
@@ -77,13 +90,14 @@ const Chat = ({ history }) => {
         </button>
       </div>
       <div>
-        {messages.map((data, index) => {
-          return <div key={index}>{data.message}</div>;
-        })}
+        {messages && (
+          <div>
+            {messages.map((data, index) => {
+              return <div key={index}>{data.message}</div>;
+            })}
+          </div>
+        )}
       </div>
-
-      {/* <MessageList /> */}
-      {/* <MessageInputField name={currentUser.displayName} /> */}
       <button
         onClick={() => {
           history.push('/');
@@ -91,10 +105,6 @@ const Chat = ({ history }) => {
       >
         戻る
       </button>
-    </div>
-  ) : (
-    <div>
-      <CircularProgress />
     </div>
   );
 };

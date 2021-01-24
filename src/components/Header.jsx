@@ -82,7 +82,7 @@ const Header = ({ history }) => {
                     style={{ margin: '0' }}
                     onClick={() => {
                       auth.signOut();
-                      history.push('/');
+                      history.push('/login');
                     }}
                   >
                     Log out

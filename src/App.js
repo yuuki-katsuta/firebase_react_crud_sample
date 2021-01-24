@@ -27,7 +27,7 @@ const App = () => {
               <PrivateRoute exact path='/' component={Home} />
               <Route exact path='/login' component={Login} />
               <Route exact path='/signup' component={SignUp} />
-              <Route exact path='/chat' component={Chat} />
+              <PrivateRoute exact path='/chat' component={Chat} />
             </Main>
           </div>
           <Typography component='div' />

@@ -43,7 +43,6 @@ const DrawerList = ({ history }) => {
               onClick={() => {
                 history.push({
                   pathname: '/chat',
-                  state: { name: currentUser.displayName },
                 });
               }}
             />
